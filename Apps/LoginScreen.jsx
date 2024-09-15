@@ -1,74 +1,139 @@
-import { StyleSheet, View, Text, TextInput, Image, Button, Touchable, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
-
-import { auth } from '../../FirebaseConfig';
-import { signInWithEmailAndPassword } from 'firebase/auth'
-
+import { StyleSheet, View, Text, TextInput, Image, KeyboardAvoidingView, Platform, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import React, { useState } from 'react';
+import { auth } from '../FirebaseConfig';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 const LoginScreen = () => {
-    const [email, setEmail] = useState ('');
-    const [password, setPassword] = useState ('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     const logIn = () => {
         signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-            console.log('Logged in with:', userCredential.user.email)
+            console.log('Logged in with:', userCredential.user.email);
         })
         .catch((error) => {
-            console.error('Error:', error)
-        })
+            console.error('Error:', error);
+        });
     };
 
-  return (
-    <View style={{ flex: 1,
+    return (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <KeyboardAvoidingView
+                style={styles.container}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
+            >
+                <View style={styles.innerContainer}>
+
+                    <View style={styles.imageContainer}>
+                        <Image source={require('../assets/images/top.png')} style={styles.topImage} />
+                        <Image source={require('../assets/images/vehiQR-spot-full.png')} style={styles.logo} />
+                    </View>
+
+                    <View style={styles.inputContainer}>
+                        <TextInput
+                            placeholder='Email'
+                            value={email}
+                            onChangeText={(text) => setEmail(text)}
+                            style={styles.ForInput}
+                        />
+                        <TextInput
+                            placeholder='Password'
+                            secureTextEntry={true}
+                            value={password}
+                            onChangeText={(text) => setPassword(text)}
+                            style={styles.ForInput}
+                        />
+                    </View>
+
+                    <TouchableOpacity onPress={logIn} style={styles.buttonContainer}>
+                        <Text style={styles.ForButton}>LOG IN</Text>
+                    </TouchableOpacity>
+
+                    <View style={styles.bottomImageContainer}>
+                        <Image source={require('../assets/images/bot.png')} style={styles.bottomImage} />
+                    </View>
+                </View>
+            </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
-        }}>
+        alignItems: 'center',
+    },
 
-            <View style={{ marginBottom: 50}}>
-                <Image source={ require ('../../assets/images/top.png')} style={{ position: 'absolute', top: -600, bottom: 0, left: -390, right: 0 }} />
-                <Image source={ require ('../../assets/images/vehiQR-spot-full.png')} style={{ position: 'absolute', top: -200, bottom: 0, left: -75, right: 0}} />
-            </View>
+    innerContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+    },
 
-            <View>
-                <TextInput placeholder='Email' value={email} onChangeText={(text) => setEmail(text)} style = {[ styles.ForInput, { marginBottom: 10 }]}/>
-                <TextInput placeholder='Password' secureTextEntry={true} value={password} onChangeText={(text) => setPassword(text)} style = {[ styles.ForInput, { marginBottom: 30 }]}/>            
-            </View>
+    imageContainer: {
+        width: '100%',
+        flex: 1,
+        padding: 10,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginBottom: 30
+    },
+    topImage: {
+        position: 'absolute',
+        top: -670,
+    },
 
-            <View>
-                <TouchableOpacity onPress = {logIn}>
-                    <Text style = {styles.ForButton}> LOG IN </Text>                    
-                </TouchableOpacity>
-            </View>
+    logo: {
+        padding: 10,
+        top: -280,
+    },
 
-            <View style={{ marginBottom: 0}}>
-                <Image source={ require ('../../assets/images/bot.png')} style={{ position: 'absolute', top: 100, bottom: 0, left: -250, right: 0, width: 500, height: 300}} />
-            </View>
-    </View>
-    )
-}
+    inputContainer: {
+        flex: 1,
+        justifyContent: 'center',
+    },
 
-const styles = StyleSheet.create ({
     ForInput: {
-    borderWidth: 1,
-    padding: 12,
-    width: 300,
-    borderRadius: 8,
-    borderColor: '#314026',
-    marginBottom: 15
+        borderWidth: 1,
+        padding: 15,
+        height: 50,
+        width: 280,
+        borderRadius: 8,
+        borderColor: '#314026',
+        marginBottom: 15,
+    },
+    buttonContainer: {
+        flex: 1,
     },
 
     ForButton: {
-    padding: 12,
-    width: 180,
-    borderRadius: 50,
-    backgroundColor: '#314026',
-    display: 'flex',
-    padding: 15,
-    textAlign: 'center',
-    color: '#ffffff',
-    fontWeight: '800'
+        padding: 15,
+        height: 50,
+        width: 180,
+        borderRadius: 60,
+        backgroundColor: '#314026',
+        textAlign: 'center',
+        color: '#ffffff',
+        fontWeight: '900',
+        top: 80
+    },
+
+    bottomImageContainer: {
+        width: '100%',
+        flex: 1,
+        top: 180
+    },
+    
+    bottomImage: {
+        width: '100%',
+        height: 300,
+        position: 'absolute',
+        bottom: -300,
     }
+
 });
 
 export default LoginScreen;
